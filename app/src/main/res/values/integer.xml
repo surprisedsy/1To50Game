@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer name="btn01">1</integer>
+    <integer name="btn02">2</integer>
+    <integer name="btn03">3</integer>
+    <integer name="btn04">4</integer>
+    <integer name="btn05">5</integer>
+
+</resources>
