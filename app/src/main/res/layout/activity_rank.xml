@@ -12,6 +12,7 @@
         android:hint="닉네임을 입력하세요"/>
 
     <ListView
+        android:id="@+id/rankList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/idSearch">
