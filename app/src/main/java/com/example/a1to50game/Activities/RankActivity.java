@@ -1,4 +1,4 @@
-package com.example.a1to50game;
+package com.example.a1to50game.Activities;
 
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.example.a1to50game.R;
 import com.example.a1to50game.Ranking.RankAdapter;
 import com.example.a1to50game.Ranking.RankInfo;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -85,7 +86,6 @@ public class RankActivity extends AppCompatActivity {
     }
 
     public void searchName() {
-        Log.d("aaaaaaaa", "" + copyList);
 
         nickName.addTextChangedListener(new TextWatcher() {
             @Override

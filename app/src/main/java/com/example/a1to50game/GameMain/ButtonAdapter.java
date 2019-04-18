@@ -3,77 +3,110 @@ package com.example.a1to50game.GameMain;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.example.a1to50game.GameActivity;
 import com.example.a1to50game.R;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class ButtonAdapter extends RecyclerView.Adapter<ButtonAdapter.ButtonViewHolder> {
 
-    private ArrayList<ButtonsNumInfo> buttonItems;
-
-    public ButtonAdapter() {}
-
-    public ButtonAdapter(ArrayList<ButtonsNumInfo> items) {
-        this.buttonItems = items;
-    }
+    private ArrayList<ButtonsNumInfo> numInfos = new ArrayList<>();
 
     @NonNull
     @Override
-    public ButtonViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
+    public ButtonAdapter.ButtonViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
 
-        Context context = parent.getContext();
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
-        View view = layoutInflater.inflate(R.layout.buttons, parent, false);
-        ButtonViewHolder btnViewHolder = new ButtonViewHolder(view);
-
-        return btnViewHolder;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.buttons, parent, false);
+        return new ButtonViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ButtonViewHolder viewHolder, int position) {
-
-        ButtonsNumInfo numInfo = buttonItems.get(position);
-
-        Button button1 = viewHolder.btn1;
-        button1.setText(numInfo.getButtonTxt());
-
-        Button button2 = viewHolder.btn2;
-        button2.setText(numInfo.getButtonTxt());
-
-        Button button3 = viewHolder.btn3;
-        button3.setText(numInfo.getButtonTxt());
-
-        Button button4 = viewHolder.btn4;
-        button4.setText(numInfo.getButtonTxt());
-
-        Button button5 = viewHolder.btn5;
-        button5.setText(numInfo.getButtonTxt());
+    public void onBindViewHolder(@NonNull ButtonAdapter.ButtonViewHolder buttonViewHolder, int position) {
+        buttonViewHolder.onBind(numInfos.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return buttonItems.size();
+        return numInfos.size();
     }
 
-    public class ButtonViewHolder extends RecyclerView.ViewHolder
+    public void addItem(ButtonsNumInfo info)
     {
-        private Button btn1, btn2, btn3, btn4, btn5;
+        numInfos.add(info);
+    }
+
+    class ButtonViewHolder extends  RecyclerView.ViewHolder{
+
+        private Button btn;
 
         public ButtonViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            btn1 = (Button) itemView.findViewById(R.id.btn01);
-            btn2 = (Button) itemView.findViewById(R.id.btn02);
-            btn3 = (Button) itemView.findViewById(R.id.btn03);
-            btn4 = (Button) itemView.findViewById(R.id.btn04);
-            btn5 = (Button) itemView.findViewById(R.id.btn05);
+            btn = itemView.findViewById(R.id.btn01);
+        }
+
+        void onBind(ButtonsNumInfo info)
+        {
+            btn.setText(info.getButtonTxt());
         }
     }
+
+
+//    private Context context;
+//    private ArrayList<ButtonsNumInfo> buttonItems;
+//
+//    public ButtonAdapter() {}
+//
+//    public ButtonAdapter(Context context, ArrayList<ButtonsNumInfo> items) {
+//        this.context = context;
+//        this.buttonItems = items;
+//    }
+//
+//    @NonNull
+//    @Override
+//    public ButtonViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
+//
+//        context = parent.getContext();
+//        LayoutInflater layoutInflater = LayoutInflater.from(context);
+//        View view = layoutInflater.inflate(R.layout.buttons, parent, false);
+//        ButtonViewHolder btnViewHolder = new ButtonViewHolder(view);
+//
+//        return btnViewHolder;
+//    }
+//
+//    @Override
+//    public void onBindViewHolder(@NonNull ButtonViewHolder viewHolder, final int position) {
+//
+//        ButtonsNumInfo numInfo = buttonItems.get(position);
+//
+//        Button button1 = viewHolder.btn1;
+//        button1.setText(numInfo.getButtonTxt());
+////        button1.setOnClickListener(new View.OnClickListener() {
+////            @Override
+////            public void onClick(View v) {
+////                Log.d("aaaaaaa", "누른 버튼 position 정보" + position);
+////            }
+////        });
+//    }
+//
+//    @Override
+//    public int getItemCount() {
+//        return buttonItems.size();
+//    }
+//
+//    public static class ButtonViewHolder extends RecyclerView.ViewHolder
+//    {
+//        private Button btn1;
+//
+//        public ButtonViewHolder(@NonNull View itemView) {
+//            super(itemView);
+//
+//            btn1 = (Button) itemView.findViewById(R.id.btn01);
+//        }
+//    }
 }
