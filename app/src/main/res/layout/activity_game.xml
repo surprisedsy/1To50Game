@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:textSize="25dp" />
+        android:textSize="20dp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/gameRecyclerView"

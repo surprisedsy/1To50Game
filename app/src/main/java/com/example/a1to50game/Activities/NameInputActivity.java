@@ -46,14 +46,12 @@ public class NameInputActivity extends AppCompatActivity {
     }
 
     public void saveData() {
-        // 1.record data intent로 받아오기
         Intent data = getIntent();
         final String recordData = data.getStringExtra("Record");
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 2. firestore 서버에 보내기
                 Map<String, Object> data = new HashMap<>();
 
                 String nickName = name.getText().toString();

@@ -9,8 +9,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Reset.ResetActivity"></activity>
-        <activity android:name=".Test.QkrclaActivity" />
         <activity android:name=".Activities.NameInputActivity" />
         <activity android:name=".Activities.RankActivity" />
         <activity android:name=".Activities.GameActivity" />

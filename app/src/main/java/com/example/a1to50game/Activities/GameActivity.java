@@ -1,48 +1,36 @@
 package com.example.a1to50game.Activities;
 
-import android.os.SystemClock;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.a1to50game.GameMain.ButtonAdapter;
 import com.example.a1to50game.GameMain.ButtonsNumInfo;
 import com.example.a1to50game.R;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class GameActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
-
+    private GestureDetector gestureDetector;
     private ButtonAdapter buttonAdapter;
 
     private TextView timerTxt;
     private Button startBtn;
-    private String runningTime;
-    private Timer timer;
-
-    public static ArrayList<ButtonsNumInfo> buttonItems = new ArrayList<>();
-
-    private GestureDetector gestureDetector;
+    private Timer timer = new Timer();
+    private ButtonsNumInfo data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +38,6 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
 
         Init();
-        createButtons();
         clickStartBtn();
     }
 
@@ -101,8 +88,12 @@ public class GameActivity extends AppCompatActivity {
         recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
+                View child = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
+                child.getTag();
+                int position = recyclerView.getChildAdapterPosition(child);
 
-                // 버튼 클릭 되면 숫자 바뀜 이벤트 넣기
+                Log.d("aaaaaaaaa", "클릭된 포지션 " + child.getTag());
+
                 return false;
             }
 
@@ -118,20 +109,25 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
-    public void createButtons() {
+    public void createRandomizeButtons(int from, int to) {
 
-        // 랜덤함수 집어넣기 -> 생성되는 숫자 겹치지 않게
-        List<String> stringList = Arrays.asList(
-                "a", "b", "c", "d", "e",
-                "a", "b", "c", "d", "e",
-                "a", "b", "c", "d", "e",
-                "a", "b", "c", "d", "e",
-                "a", "b", "c", "d", "e");
+        int values[] = new int[25];
+        Random random = new Random();
 
-        for (int i = 0; i < stringList.size(); i++) {
-            ButtonsNumInfo data = new ButtonsNumInfo();
-            data.setButtonTxt(stringList.get(i));
+        for(int i = 0; i < values.length; i++)
+        {
+            values[i] = random.nextInt(to) + from;
+            for(int j = 0; j < i; j++)
+            {
+                if(values[i] == values[j])
+                    i--;
+            }
+        }
 
+        for(int k = 0; k < 25; k++)
+        {
+            data = new ButtonsNumInfo();
+            data.setButtonTxt(String.valueOf(values[k]));
             buttonAdapter.addItem(data);
         }
         buttonAdapter.notifyDataSetChanged();
@@ -141,30 +137,41 @@ public class GameActivity extends AppCompatActivity {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                long startTime = System.currentTimeMillis();
-
-
-                // 게임 플레이 하는 함수 넣으면 될듯;;;
-
-
-                long currentTime = System.currentTimeMillis();
-
-                long millis = currentTime - startTime;
-                int seconds = (int) millis / 1000;
-                seconds = seconds % 60;
-
-                millis = (millis / 10) % 100;
-                runningTime = String.format("%02d : %02d", seconds, millis);
-                timerTxt.setText(runningTime);
+                createRandomizeButtons(1, 25);
+                timer.schedule(new GameTimerTask(), 3000, 1000);
             }
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    private void updateTime(long time)
+    {
+        timerTxt.setText("기록: " + String.valueOf(time) + "초");
+    }
 
-        timerTxt.setText(null);
+    private class GameTimerTask extends TimerTask {
+        private long seconds = 0;
+
+        @Override
+        public void run() {
+            if (seconds == 100000) {
+                timer.cancel();
+
+                Intent intent = new Intent(GameActivity.this, NameInputActivity.class);
+//                intent.putExtra("Record", String.valueOf(seconds));
+                startActivity(intent);
+                finish();
+
+                return;
+            }
+            seconds++;
+
+            // ui 변경은 메인 쓰레드에서
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    updateTime(seconds);
+                }
+            });
+        }
     }
 }
