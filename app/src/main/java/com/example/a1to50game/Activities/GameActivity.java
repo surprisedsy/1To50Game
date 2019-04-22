@@ -1,6 +1,8 @@
 package com.example.a1to50game.Activities;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,10 +10,13 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.a1to50game.GameMain.ButtonAdapter;
 import com.example.a1to50game.GameMain.ButtonsNumInfo;
@@ -20,8 +25,13 @@ import com.example.a1to50game.R;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Vector;
+import java.util.zip.Inflater;
 
 public class GameActivity extends AppCompatActivity {
+
+    private static long SECONDS = 0;
+    private static int mCurrentNum = 1;
 
     private RecyclerView recyclerView;
     private GestureDetector gestureDetector;
@@ -30,7 +40,9 @@ public class GameActivity extends AppCompatActivity {
     private TextView timerTxt;
     private Button startBtn;
     private Timer timer = new Timer();
-    private ButtonsNumInfo data;
+
+    Vector<Integer> _1to25 = new Vector<>();
+    Vector<Integer> _26to50 = new Vector<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +62,7 @@ public class GameActivity extends AppCompatActivity {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 5);
         recyclerView.setLayoutManager(gridLayoutManager);
 
-        buttonAdapter = new ButtonAdapter();
+        buttonAdapter = new ButtonAdapter(this);
         recyclerView.setAdapter(buttonAdapter);
 
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureDetector.OnGestureListener() {
@@ -84,16 +96,74 @@ public class GameActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
 
+    public void clickStartBtn() {
+        startBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createRandomizeNums();
+                timer.schedule(new GameTimerTask(), 3000, 1000);
+            }
+        });
+    }
+
+    public void createRandomizeNums() {
+        for (int i = 1; i <= 25; i++) {
+            _1to25.add(i);
+            _26to50.add(i + 25);
+        }
+
+        for (int i = 1; i <= 25; i++) {
+            int random = (int) (Math.random() * _1to25.size());
+            buttonAdapter.init1to25(_1to25.get(random));
+            _1to25.remove(random);
+
+            buttonAdapter.notifyDataSetChanged();
+        }
+
+        gamePlay();
+    }
+
+    public void gamePlay() {
         recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
                 View child = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
-                child.getTag();
-                int position = recyclerView.getChildAdapterPosition(child);
 
-                Log.d("aaaaaaaaa", "클릭된 포지션 " + child.getTag());
+                if (child != null) {
+                    int clicked = buttonAdapter.getBtnNums(recyclerView.getChildAdapterPosition(child));
 
+                    if (clicked == mCurrentNum) {
+                        int position = recyclerView.getChildAdapterPosition(child);
+
+                        if (_26to50 != null) {
+                            int random = (int) (Math.random() * _26to50.size());
+                            buttonAdapter.updateNum(position, _26to50.get(random));
+                            _26to50.remove(random);
+
+                            if (_26to50.size() == 0) {
+                                _26to50 = null;
+                            }
+                        }
+                        if (clicked > 25 && clicked == mCurrentNum) {
+                            Log.d("aaaaaa clicked", clicked + "");
+                            Log.d("aaaaaa current Num", mCurrentNum + "");
+
+                            buttonAdapter.setUpVisible(position);
+                        }
+
+                        mCurrentNum++;
+                        buttonAdapter.notifyDataSetChanged();
+                    }
+
+                    if (mCurrentNum == 51) {
+                        Intent intent = new Intent(GameActivity.this, NameInputActivity.class);
+                        intent.putExtra("Record", String.valueOf(SECONDS));
+                        startActivity(intent);
+                        finish();
+                    }
+                }
                 return false;
             }
 
@@ -109,67 +179,25 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
-    public void createRandomizeButtons(int from, int to) {
-
-        int values[] = new int[25];
-        Random random = new Random();
-
-        for(int i = 0; i < values.length; i++)
-        {
-            values[i] = random.nextInt(to) + from;
-            for(int j = 0; j < i; j++)
-            {
-                if(values[i] == values[j])
-                    i--;
-            }
-        }
-
-        for(int k = 0; k < 25; k++)
-        {
-            data = new ButtonsNumInfo();
-            data.setButtonTxt(String.valueOf(values[k]));
-            buttonAdapter.addItem(data);
-        }
-        buttonAdapter.notifyDataSetChanged();
-    }
-
-    public void clickStartBtn() {
-        startBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createRandomizeButtons(1, 25);
-                timer.schedule(new GameTimerTask(), 3000, 1000);
-            }
-        });
-    }
-
-    private void updateTime(long time)
-    {
+    private void updateTime(long time) {
         timerTxt.setText("기록: " + String.valueOf(time) + "초");
     }
 
     private class GameTimerTask extends TimerTask {
-        private long seconds = 0;
-
         @Override
         public void run() {
-            if (seconds == 100000) {
+            if (mCurrentNum == 51) {
                 timer.cancel();
-
-                Intent intent = new Intent(GameActivity.this, NameInputActivity.class);
-//                intent.putExtra("Record", String.valueOf(seconds));
-                startActivity(intent);
-                finish();
 
                 return;
             }
-            seconds++;
+            SECONDS++;
 
             // ui 변경은 메인 쓰레드에서
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    updateTime(seconds);
+                    updateTime(SECONDS);
                 }
             });
         }
