@@ -39,6 +39,8 @@ public class GameActivity extends AppCompatActivity {
 
     private TextView timerTxt;
     private Button startBtn;
+
+    private TimerTask mTimerTask;
     private Timer timer = new Timer();
 
     Vector<Integer> _1to25 = new Vector<>();
@@ -51,6 +53,8 @@ public class GameActivity extends AppCompatActivity {
 
         Init();
         clickStartBtn();
+
+        gamePlay();
     }
 
     public void Init() {
@@ -103,7 +107,7 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 createRandomizeNums();
-                timer.schedule(new GameTimerTask(), 3000, 1000);
+                timerSetting();
             }
         });
     }
@@ -118,11 +122,8 @@ public class GameActivity extends AppCompatActivity {
             int random = (int) (Math.random() * _1to25.size());
             buttonAdapter.init1to25(_1to25.get(random));
             _1to25.remove(random);
-
             buttonAdapter.notifyDataSetChanged();
         }
-
-        gamePlay();
     }
 
     public void gamePlay() {
@@ -147,21 +148,11 @@ public class GameActivity extends AppCompatActivity {
                             }
                         }
                         if (clicked > 25 && clicked == mCurrentNum) {
-                            Log.d("aaaaaa clicked", clicked + "");
-                            Log.d("aaaaaa current Num", mCurrentNum + "");
-
                             buttonAdapter.setUpVisible(position);
                         }
 
                         mCurrentNum++;
                         buttonAdapter.notifyDataSetChanged();
-                    }
-
-                    if (mCurrentNum == 51) {
-                        Intent intent = new Intent(GameActivity.this, NameInputActivity.class);
-                        intent.putExtra("Record", String.valueOf(SECONDS));
-                        startActivity(intent);
-                        finish();
                     }
                 }
                 return false;
@@ -179,27 +170,52 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
-    private void updateTime(long time) {
-        timerTxt.setText("기록: " + String.valueOf(time) + "초");
+    public void timerSetting() {
+        final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+
+                timerTxt.setText("기록: " + String.valueOf(SECONDS) + "초");
+            }
+        };
+
+        mTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                SECONDS++;
+
+                if (mCurrentNum == 51) {
+                    try {
+                        stopTimer();
+                    } catch (Exception e) {
+                        Log.e("timer exception", e.getMessage());
+                    }
+
+                    Intent intent = new Intent(GameActivity.this, NickNameActivity.class);
+                    intent.putExtra("Record", String.valueOf(SECONDS));
+                    startActivity(intent);
+                    finish();
+                }
+
+                Message msg = handler.obtainMessage();
+                handler.sendMessage(msg);
+            }
+        };
+
+        timer.schedule(mTimerTask, 3000, 1000);
     }
 
-    private class GameTimerTask extends TimerTask {
-        @Override
-        public void run() {
-            if (mCurrentNum == 51) {
-                timer.cancel();
-
-                return;
-            }
-            SECONDS++;
-
-            // ui 변경은 메인 쓰레드에서
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    updateTime(SECONDS);
-                }
-            });
+    public void stopTimer() {
+        if (mTimerTask != null) {
+            mTimerTask.cancel();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopTimer();
+        finish();
     }
 }

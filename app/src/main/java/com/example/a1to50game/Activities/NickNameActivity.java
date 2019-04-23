@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,22 +20,22 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NameInputActivity extends AppCompatActivity {
+public class NickNameActivity extends AppCompatActivity {
 
-    private EditText name;
-    private TextView record;
-    private Button save, main;
+    EditText name;
+    TextView record;
+    Button save, main;
 
-    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_name_input);
+        setContentView(R.layout.activity_nick_name);
 
         Init();
         saveData();
-        backToMainActivity();
+        goToMain();
     }
 
     public void Init() {
@@ -45,9 +46,10 @@ public class NameInputActivity extends AppCompatActivity {
         main = (Button) findViewById(R.id.main);
     }
 
-    public void saveData() {
-        Intent data = getIntent();
-        final String recordData = data.getStringExtra("Record");
+    public void saveData()
+    {
+        final String recordData = getIntent().getStringExtra("Record");
+        record.setText(recordData + "초");
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,28 +59,39 @@ public class NameInputActivity extends AppCompatActivity {
                 String nickName = name.getText().toString();
 
                 data.put("NickName", nickName);
-                data.put("Record", recordData);
+                data.put("Record", recordData + "초");
 
                 firestore.collection("recordData")
                         .add(data)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
-                                Toast.makeText(NameInputActivity.this, "기록 저장 완료", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(NickNameActivity.this, "기록 저장 완료", Toast.LENGTH_SHORT).show();
+
+                                Intent rankIntent = new Intent(NickNameActivity.this, MainActivity.class);
+                                startActivity(rankIntent);
+                                finish();
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(NameInputActivity.this, "기록 저장에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(NickNameActivity.this, "기록 저장에 실패했습니다.", Toast.LENGTH_SHORT).show();
                             }
                         });
             }
         });
     }
 
-    public void backToMainActivity() {
-        Intent mainIntent = new Intent(NameInputActivity.this, MainActivity.class);
-        startActivity(mainIntent);
+    public void goToMain()
+    {
+        main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mainIntent = new Intent(NickNameActivity.this, MainActivity.class);
+                startActivity(mainIntent);
+                finish();
+            }
+        });
     }
 }
