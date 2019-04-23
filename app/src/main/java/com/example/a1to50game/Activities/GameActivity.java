@@ -106,6 +106,7 @@ public class GameActivity extends AppCompatActivity {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(GameActivity.this, "3초 후 시작됩니다.", Toast.LENGTH_SHORT).show();
                 createRandomizeNums();
                 timerSetting();
             }
@@ -209,6 +210,7 @@ public class GameActivity extends AppCompatActivity {
     public void stopTimer() {
         if (mTimerTask != null) {
             mTimerTask.cancel();
+            mTimerTask = null;
         }
     }
 
@@ -216,6 +218,5 @@ public class GameActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopTimer();
-        finish();
     }
 }
