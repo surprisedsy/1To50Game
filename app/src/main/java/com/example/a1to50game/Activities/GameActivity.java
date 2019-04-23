@@ -10,23 +10,18 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a1to50game.GameMain.ButtonAdapter;
-import com.example.a1to50game.GameMain.ButtonsNumInfo;
 import com.example.a1to50game.R;
 
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
-import java.util.zip.Inflater;
 
 public class GameActivity extends AppCompatActivity {
 

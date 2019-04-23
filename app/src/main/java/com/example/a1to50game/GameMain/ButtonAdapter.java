@@ -11,7 +11,6 @@ import android.widget.Button;
 
 import com.example.a1to50game.R;
 
-import java.util.ArrayList;
 import java.util.Vector;
 
 public class ButtonAdapter extends RecyclerView.Adapter<ButtonAdapter.ButtonViewHolder> {
