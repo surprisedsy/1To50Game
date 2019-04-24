@@ -25,7 +25,7 @@ import java.util.Vector;
 
 public class GameActivity extends AppCompatActivity {
 
-    public long SECONDS = 0;
+    private long SECONDS = 0;
     private int mCurrentNum = 1;
 
     private RecyclerView recyclerView;
