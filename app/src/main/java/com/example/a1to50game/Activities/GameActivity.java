@@ -16,26 +16,26 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.a1to50game.GameMain.ButtonAdapter;
+import com.example.a1to50game.GameMain.GameAdapter;
 import com.example.a1to50game.R;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     private long SECONDS = 0;
     private int mCurrentNum = 1;
 
     private RecyclerView recyclerView;
-    private GestureDetector gestureDetector;
-    private ButtonAdapter buttonAdapter;
+    private GestureDetector mGestureDetector;
+    private GameAdapter mGameAdapter;
 
     private TextView timerTxt;
-    private Button startBtn;
+    private Button gameStartBtn;
 
-    private TimerTask mTimerTask;
+    private TimerTask timerTask;
     private Timer timer = new Timer();
 
     Vector<Integer> _1to25 = new Vector<>();
@@ -46,7 +46,7 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        Init();
+        init();
         clickStartBtn();
 
         new Handler().postDelayed(new Runnable() {
@@ -57,19 +57,19 @@ public class GameActivity extends AppCompatActivity {
         }, 3000);
     }
 
-    public void Init() {
+    public void init() {
 
         recyclerView = findViewById(R.id.gameRecyclerView);
-        timerTxt = (TextView) findViewById(R.id.timer);
-        startBtn = (Button) findViewById(R.id.gameStart);
+        timerTxt = findViewById(R.id.timerTxt);
+        gameStartBtn = findViewById(R.id.gameStartBtn);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 5);
         recyclerView.setLayoutManager(gridLayoutManager);
 
-        buttonAdapter = new ButtonAdapter(this);
-        recyclerView.setAdapter(buttonAdapter);
+        mGameAdapter = new GameAdapter(this);
+        recyclerView.setAdapter(mGameAdapter);
 
-        gestureDetector = new GestureDetector(getApplicationContext(), new GestureDetector.OnGestureListener() {
+        mGestureDetector = new GestureDetector(getApplicationContext(), new GestureDetector.OnGestureListener() {
             @Override
             public boolean onDown(MotionEvent e) {
                 return false;
@@ -77,7 +77,6 @@ public class GameActivity extends AppCompatActivity {
 
             @Override
             public void onShowPress(MotionEvent e) {
-
             }
 
             @Override
@@ -92,7 +91,6 @@ public class GameActivity extends AppCompatActivity {
 
             @Override
             public void onLongPress(MotionEvent e) {
-
             }
 
             @Override
@@ -103,15 +101,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void clickStartBtn() {
-        startBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timerTxt.setText("기록: ");
-                Toast.makeText(GameActivity.this, "3초 후 시작됩니다.", Toast.LENGTH_SHORT).show();
-                createRandomizeNums();
-                timerSetting();
-            }
-        });
+        gameStartBtn.setOnClickListener(this);
     }
 
     public void createRandomizeNums() {
@@ -122,9 +112,9 @@ public class GameActivity extends AppCompatActivity {
 
         for (int i = 1; i <= 25; i++) {
             int random = (int) (Math.random() * _1to25.size());
-            buttonAdapter.init1to25(_1to25.get(random));
+            mGameAdapter.init1to25(_1to25.get(random));
             _1to25.remove(random);
-            buttonAdapter.notifyDataSetChanged();
+            mGameAdapter.notifyDataSetChanged();
         }
     }
 
@@ -136,20 +126,17 @@ public class GameActivity extends AppCompatActivity {
                 int btnPosition = recyclerView.getChildAdapterPosition(child);
 
                 if (child != null) {
-
-                    Log.d("btnPosition check", btnPosition + "");
-
-                    if(btnPosition < 0)
+                    if (btnPosition < 0)
                         ++btnPosition;
 
-                    int clicked = buttonAdapter.getBtnNums(btnPosition);
+                    int clicked = mGameAdapter.getBtnNums(btnPosition);
 
                     if (clicked == mCurrentNum) {
                         int position = recyclerView.getChildAdapterPosition(child);
 
                         if (_26to50 != null) {
                             int random = (int) (Math.random() * _26to50.size());
-                            buttonAdapter.updateNum(position, _26to50.get(random));
+                            mGameAdapter.updateNum(position, _26to50.get(random));
                             _26to50.remove(random);
 
                             if (_26to50.size() == 0) {
@@ -157,11 +144,10 @@ public class GameActivity extends AppCompatActivity {
                             }
                         }
                         if (clicked > 25 && clicked == mCurrentNum) {
-                            buttonAdapter.setUpVisible(position);
+                            mGameAdapter.setUpVisible(position);
                         }
-
                         mCurrentNum++;
-                        buttonAdapter.notifyDataSetChanged();
+                        mGameAdapter.notifyDataSetChanged();
                     }
                 }
                 return false;
@@ -169,12 +155,10 @@ public class GameActivity extends AppCompatActivity {
 
             @Override
             public void onTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
-
             }
 
             @Override
             public void onRequestDisallowInterceptTouchEvent(boolean b) {
-
             }
         });
     }
@@ -189,7 +173,7 @@ public class GameActivity extends AppCompatActivity {
             }
         };
 
-        mTimerTask = new TimerTask() {
+        timerTask = new TimerTask() {
             @Override
             public void run() {
                 SECONDS++;
@@ -200,8 +184,7 @@ public class GameActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         Log.e("timer exception", e.getMessage());
                     }
-
-                    Intent intent = new Intent(GameActivity.this, NickNameActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
                     intent.putExtra("Record", String.valueOf(SECONDS));
                     startActivity(intent);
                     finish();
@@ -211,14 +194,13 @@ public class GameActivity extends AppCompatActivity {
                 handler.sendMessage(msg);
             }
         };
-
-        timer.schedule(mTimerTask, 3000, 1000);
+        timer.schedule(timerTask, 3000, 1000);
     }
 
     public void stopTimer() {
-        if (mTimerTask != null) {
-            mTimerTask.cancel();
-            mTimerTask = null;
+        if (timerTask != null) {
+            timerTask.cancel();
+            timerTask = null;
         }
     }
 
@@ -232,8 +214,21 @@ public class GameActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
 
-        Intent mainIntent = new Intent(GameActivity.this, MainActivity.class);
+        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(mainIntent);
         finish();
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        switch (id) {
+            case R.id.gameStartBtn:
+                timerTxt.setText("기록: ");
+                Toast.makeText(getApplicationContext(), "3초 후 시작됩니다.", Toast.LENGTH_SHORT).show();
+                createRandomizeNums();
+                timerSetting();
+                break;
+        }
     }
 }

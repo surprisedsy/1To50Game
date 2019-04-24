@@ -4,14 +4,7 @@ public class RankInfo {
 
     String nameTxt, recordTxt, numberTxt;
 
-    public RankInfo() {
-    }
-
-    public RankInfo(String name, String record, String number) {
-        this.nameTxt = name;
-        this.recordTxt = record;
-        this.numberTxt = number;
-    }
+    public RankInfo() {}
 
     public String getNameTxt() {
         return nameTxt;

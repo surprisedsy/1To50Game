@@ -83,7 +83,7 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
                                 Toast.makeText(getApplicationContext(), "기록 저장 완료", Toast.LENGTH_SHORT).show();
-                                backToMainActivity();
+                                backToMainActivity(); 
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {

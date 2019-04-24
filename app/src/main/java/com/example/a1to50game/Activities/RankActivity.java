@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -30,25 +31,25 @@ public class RankActivity extends AppCompatActivity {
     private List<RankInfo> rankInfoList = new ArrayList<RankInfo>();
     private List<RankInfo> copyList = new ArrayList<>();
     private RankAdapter rankAdapter;
-    private ListView listView;
+    private ListView rankListView;
 
-    private EditText nickName;
+    private EditText idSearchEdTxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rank);
 
-        Init();
+        init();
         getData();
     }
 
-    public void Init() {
-        nickName = (EditText) findViewById(R.id.idSearch);
+    public void init() {
+        idSearchEdTxt = findViewById(R.id.idSearch);
 
-        listView = (ListView) findViewById(R.id.rankList);
+        rankListView = findViewById(R.id.rankListView);
         rankAdapter = new RankAdapter(this, rankInfoList);
-        listView.setAdapter(rankAdapter);
+        rankListView.setAdapter(rankAdapter);
     }
 
     public void getData() {
@@ -60,19 +61,17 @@ public class RankActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            String name = document.get("NickName").toString();
-                            String record = document.get("Record").toString();
+                            String userName = document.get("NickName").toString();
+                            String userRecord = document.get("Record").toString();
 
                             RankInfo info = new RankInfo();
 
-                            info.setNameTxt(name + " /");
-                            info.setRecordTxt(record);
+                            info.setNameTxt(userName + " /");
+                            info.setRecordTxt(userRecord);
 
-                            for(int i = -1; i < rankInfoList.size(); i++)
-                            {
-                                info.setNumberTxt(String.valueOf(i+2) + "등");
+                            for (int i = -1; i < rankInfoList.size(); i++) {
+                                info.setNumberTxt(String.valueOf(i + 2) + "등");
                             }
-
                             rankInfoList.add(info);
                         }
                         copyList.addAll(rankInfoList);
@@ -91,28 +90,26 @@ public class RankActivity extends AppCompatActivity {
     }
 
     public void searchName() {
-        nickName.addTextChangedListener(new TextWatcher() {
+        idSearchEdTxt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                String searchTxt = nickName.getText().toString();
+                String idSearchTxt = idSearchEdTxt.getText().toString();
 
                 rankInfoList.clear();
 
-                if (searchTxt.length() == 0)
+                if (idSearchTxt.length() == 0)
                     rankInfoList.addAll(copyList);
                 else {
                     for (int i = 0; i < copyList.size(); i++) {
-                        if (copyList.get(i).getNameTxt().contains(searchTxt))
+                        if (copyList.get(i).getNameTxt().contains(idSearchTxt))
                             rankInfoList.add(copyList.get(i));
                     }
                 }
@@ -125,7 +122,7 @@ public class RankActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
 
-        Intent mainIntent = new Intent(RankActivity.this, MainActivity.class);
+        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(mainIntent);
         finish();
     }

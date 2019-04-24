@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".Activities.RankActivity">
+    android:layout_height="match_parent">
 
     <EditText
         android:id="@+id/idSearch"
-        android:layout_width="match_parent"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:hint="닉네임을 입력하세요"/>
+        android:hint="닉네임을 입력하세요" />
+
+    <Button
+        android:id="@+id/rankSearchBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/idSearch"
+        android:layout_alignParentEnd="true"
+        android:text="검색"/>
 
     <ListView
-        android:id="@+id/rankList"
+        android:id="@+id/rankListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/idSearch">
-
     </ListView>
 
 </RelativeLayout>

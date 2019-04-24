@@ -8,43 +8,43 @@ import android.widget.Button;
 
 import com.example.a1to50game.R;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button start, rank;
+    private Button startBtn, rankBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Init();
+        init();
         buttons();
     }
 
-    public void Init()
-    {
-        start = (Button) findViewById(R.id.startBtn);
-        rank = (Button) findViewById(R.id.rankBtn);
+    public void init() {
+        startBtn = findViewById(R.id.startBtn);
+        rankBtn = findViewById(R.id.rankBtn);
     }
 
-    public void buttons()
-    {
-        start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent startIntent = new Intent(MainActivity.this, GameActivity.class);
+    public void buttons() {
+        startBtn.setOnClickListener(this);
+        rankBtn.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        int buttonsId = view.getId();
+        switch (buttonsId) {
+            case R.id.startBtn:
+                Intent startIntent = new Intent(getApplicationContext(), GameActivity.class);
                 startActivity(startIntent);
                 finish();
-            }
-        });
-
-        rank.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent rankIntent = new Intent(MainActivity.this, RankActivity.class);
+                break;
+            case R.id.rankBtn:
+                Intent rankIntent = new Intent(getApplicationContext(), RankActivity.class);
                 startActivity(rankIntent);
                 finish();
-            }
-        });
+                break;
+        }
     }
 }
