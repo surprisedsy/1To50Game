@@ -18,7 +18,7 @@ public class RankAdapter extends BaseAdapter {
     private List<RankInfo> rankInfos;
     private LayoutInflater layoutInflater;
 
-    private TextView name, record;
+    private TextView name, record, number;
 
     public RankAdapter(Activity activity, List<RankInfo> rankInfos)
     {
@@ -51,11 +51,13 @@ public class RankAdapter extends BaseAdapter {
 
         name = (TextView) convertView.findViewById(R.id.rank_name);
         record = (TextView) convertView.findViewById(R.id.rank_record);
+        number = (TextView) convertView.findViewById(R.id.rank_rank);
 
         RankInfo info = rankInfos.get(position);
 
         name.setText(info.getNameTxt());
         record.setText(info.getRecordTxt());
+        number.setText(info.getNumberTxt());
 
         return convertView;
     }

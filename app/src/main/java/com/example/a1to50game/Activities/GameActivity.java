@@ -25,8 +25,8 @@ import java.util.Vector;
 
 public class GameActivity extends AppCompatActivity {
 
-    private static long SECONDS = 0;
-    private static int mCurrentNum = 1;
+    public long SECONDS = 0;
+    private int mCurrentNum = 1;
 
     private RecyclerView recyclerView;
     private GestureDetector gestureDetector;
@@ -49,7 +49,12 @@ public class GameActivity extends AppCompatActivity {
         Init();
         clickStartBtn();
 
-        gamePlay();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                gamePlay();
+            }
+        }, 3000);
     }
 
     public void Init() {
@@ -101,6 +106,7 @@ public class GameActivity extends AppCompatActivity {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                timerTxt.setText("기록: ");
                 Toast.makeText(GameActivity.this, "3초 후 시작됩니다.", Toast.LENGTH_SHORT).show();
                 createRandomizeNums();
                 timerSetting();
@@ -127,9 +133,16 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
                 View child = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
+                int btnPosition = recyclerView.getChildAdapterPosition(child);
 
                 if (child != null) {
-                    int clicked = buttonAdapter.getBtnNums(recyclerView.getChildAdapterPosition(child));
+
+                    Log.d("btnPosition check", btnPosition + "");
+
+                    if(btnPosition < 0)
+                        ++btnPosition;
+
+                    int clicked = buttonAdapter.getBtnNums(btnPosition);
 
                     if (clicked == mCurrentNum) {
                         int position = recyclerView.getChildAdapterPosition(child);
@@ -213,5 +226,14 @@ public class GameActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopTimer();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        Intent mainIntent = new Intent(GameActivity.this, MainActivity.class);
+        startActivity(mainIntent);
+        finish();
     }
 }

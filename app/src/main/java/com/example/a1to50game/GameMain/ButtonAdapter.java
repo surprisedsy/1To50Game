@@ -19,11 +19,10 @@ public class ButtonAdapter extends RecyclerView.Adapter<ButtonAdapter.ButtonView
     private Vector<Integer> visible = new Vector<>();
     private Context context;
 
-    public ButtonAdapter(Context context)
-    {
+    public ButtonAdapter(Context context) {
         this.context = context;
 
-        for(int i = 0; i < 25; i++)
+        for (int i = 0; i < 25; i++)
             visible.add(i, View.VISIBLE);
     }
 
@@ -48,29 +47,25 @@ public class ButtonAdapter extends RecyclerView.Adapter<ButtonAdapter.ButtonView
         return _1to50.size();
     }
 
-    public void init1to25(int number)
-    {
+    public void init1to25(int number) {
         _1to50.add(number);
     }
 
-    public void updateNum(int position, int number)
-    {
+    public void updateNum(int position, int number) {
         _1to50.remove(position);
         _1to50.add(position, number);
     }
 
-    public void setUpVisible(int position)
-    {
+    public void setUpVisible(int position) {
         visible.remove(position);
         visible.add(position, View.INVISIBLE);
     }
 
-    public int getBtnNums(int number)
-    {
+    public int getBtnNums(int number) {
         return _1to50.get(number);
     }
 
-    class ButtonViewHolder extends  RecyclerView.ViewHolder{
+    class ButtonViewHolder extends RecyclerView.ViewHolder {
 
         private Button btn;
 

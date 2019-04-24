@@ -2,14 +2,15 @@ package com.example.a1to50game.Ranking;
 
 public class RankInfo {
 
-    String nameTxt, recordTxt;
+    String nameTxt, recordTxt, numberTxt;
 
-    public RankInfo() {}
+    public RankInfo() {
+    }
 
-    public RankInfo(String name, String record)
-    {
+    public RankInfo(String name, String record, String number) {
         this.nameTxt = name;
         this.recordTxt = record;
+        this.numberTxt = number;
     }
 
     public String getNameTxt() {
@@ -26,5 +27,13 @@ public class RankInfo {
 
     public void setRecordTxt(String recordTxt) {
         this.recordTxt = recordTxt;
+    }
+
+    public String getNumberTxt() {
+        return numberTxt;
+    }
+
+    public void setNumberTxt(String numberTxt) {
+        this.numberTxt = numberTxt;
     }
 }

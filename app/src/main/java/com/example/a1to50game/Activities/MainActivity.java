@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent startIntent = new Intent(MainActivity.this, GameActivity.class);
                 startActivity(startIntent);
+                finish();
             }
         });
 
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent rankIntent = new Intent(MainActivity.this, RankActivity.class);
                 startActivity(rankIntent);
+                finish();
             }
         });
     }

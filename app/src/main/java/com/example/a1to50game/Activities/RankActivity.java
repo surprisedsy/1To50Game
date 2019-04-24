@@ -1,5 +1,6 @@
 package com.example.a1to50game.Activities;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -64,12 +65,16 @@ public class RankActivity extends AppCompatActivity {
 
                             RankInfo info = new RankInfo();
 
-                            info.setNameTxt(name + " : ");
+                            info.setNameTxt(name + " /");
                             info.setRecordTxt(record);
+
+                            for(int i = -1; i < rankInfoList.size(); i++)
+                            {
+                                info.setNumberTxt(String.valueOf(i+2) + "등");
+                            }
 
                             rankInfoList.add(info);
                         }
-
                         copyList.addAll(rankInfoList);
 
                         searchName();
@@ -86,7 +91,6 @@ public class RankActivity extends AppCompatActivity {
     }
 
     public void searchName() {
-
         nickName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -117,5 +121,12 @@ public class RankActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
 
+        Intent mainIntent = new Intent(RankActivity.this, MainActivity.class);
+        startActivity(mainIntent);
+        finish();
+    }
 }
