@@ -1,64 +1,65 @@
 package com.example.a1to50game.Ranking;
 
-import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.a1to50game.R;
 
-import java.util.List;
+import java.util.Vector;
 
-public class RankAdapter extends BaseAdapter {
+public class RankAdapter extends RecyclerView.Adapter<RankAdapter.RankViewHolder> {
 
-    private Activity activity;
-    private List<RankInfo> rankInfos;
-    private LayoutInflater layoutInflater;
+    private Vector<RankInfo> rankInfos;
+    private Context context;
 
-    private TextView nameTxt, recordTxt, numberTxt;
-
-    public RankAdapter(Activity activity, List<RankInfo> rankInfos)
-    {
-        this.activity = activity;
+    public RankAdapter(Context context, Vector<RankInfo> rankInfos) {
+        this.context = context;
         this.rankInfos = rankInfos;
     }
 
+    @NonNull
     @Override
-    public int getCount() {
-        return rankInfos.size();
+    public RankViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ranktext, parent, false);
+        return new RankViewHolder(view);
     }
 
     @Override
-    public Object getItem(int position) {
-        return rankInfos.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        if(layoutInflater == null)
-            layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(convertView == null)
-            convertView = layoutInflater.inflate(R.layout.fragment_rank_list, null);
-
-        numberTxt = convertView.findViewById(R.id.rank_rankTxt);
-        nameTxt = convertView.findViewById(R.id.rank_nameTxt);
-        recordTxt = convertView.findViewById(R.id.rank_recordTxt);
+    public void onBindViewHolder(@NonNull RankViewHolder rankViewHolder, int position) {
 
         RankInfo info = rankInfos.get(position);
 
-        numberTxt.setText(info.getNumberTxt());
-        nameTxt.setText(info.getNameTxt());
-        recordTxt.setText(info.getRecordTxt());
+        if (position < 10) {
+            rankViewHolder.numberTxt.setText(info.getNumberTxt());
+            rankViewHolder.nameTxt.setText(info.getNameTxt());
+            rankViewHolder.recordTxt.setText(info.getRecordTxt());
+        } else {
+            rankViewHolder.numberTxt.setVisibility(View.GONE);
+            rankViewHolder.nameTxt.setVisibility(View.GONE);
+            rankViewHolder.recordTxt.setVisibility(View.GONE);
+        }
+    }
 
-        return convertView;
+    @Override
+    public int getItemCount() {
+        return rankInfos.size();
+    }
+
+    class RankViewHolder extends RecyclerView.ViewHolder {
+        private TextView nameTxt, recordTxt, numberTxt;
+
+        public RankViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            numberTxt = itemView.findViewById(R.id.rank_rankTxt);
+            nameTxt = itemView.findViewById(R.id.rank_nameTxt);
+            recordTxt = itemView.findViewById(R.id.rank_recordTxt);
+        }
     }
 }

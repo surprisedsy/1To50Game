@@ -38,8 +38,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private TimerTask timerTask;
     private Timer timer = new Timer();
 
-    Vector<Integer> _1to25 = new Vector<>();
-    Vector<Integer> _26to50 = new Vector<>();
+    Vector<Integer> group_1to25 = new Vector<>();
+    Vector<Integer> group_26to50 = new Vector<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +58,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void init() {
-
         recyclerView = findViewById(R.id.gameRecyclerView);
         timerTxt = findViewById(R.id.timerTxt);
         gameStartBtn = findViewById(R.id.gameStartBtn);
@@ -106,14 +105,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     public void createRandomizeNums() {
         for (int i = 1; i <= 25; i++) {
-            _1to25.add(i);
-            _26to50.add(i + 25);
+            group_1to25.add(i);
+            group_26to50.add(i + 25);
         }
 
         for (int i = 1; i <= 25; i++) {
-            int random = (int) (Math.random() * _1to25.size());
-            mGameAdapter.init1to25(_1to25.get(random));
-            _1to25.remove(random);
+            int random = (int) (Math.random() * group_1to25.size());
+            mGameAdapter.init1to25(group_1to25.get(random));
+            group_1to25.remove(random);
             mGameAdapter.notifyDataSetChanged();
         }
     }
@@ -134,13 +133,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     if (clicked == mCurrentNum) {
                         int position = recyclerView.getChildAdapterPosition(child);
 
-                        if (_26to50 != null) {
-                            int random = (int) (Math.random() * _26to50.size());
-                            mGameAdapter.updateNum(position, _26to50.get(random));
-                            _26to50.remove(random);
+                        if (group_26to50 != null) {
+                            int random = (int) (Math.random() * group_26to50.size());
+                            mGameAdapter.updateNum(position, group_26to50.get(random));
+                            group_26to50.remove(random);
 
-                            if (_26to50.size() == 0) {
-                                _26to50 = null;
+                            if (group_26to50.size() == 0) {
+                                group_26to50 = null;
                             }
                         }
                         if (clicked > 25 && clicked == mCurrentNum) {

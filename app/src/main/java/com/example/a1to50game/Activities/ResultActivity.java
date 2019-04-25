@@ -19,14 +19,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ResultActivity extends AppCompatActivity implements View.OnClickListener {
+public class ResultActivity extends AppCompatActivity {
 
-    private EditText nameInputEdTxt;
+    private EditText nickNameInputEdTxt;
     private TextView recordTxt;
     private Button saveBtn, mainBtn;
 
     private String mRecordData;
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    private BtnOnClickListener btnOnClickListener = new BtnOnClickListener();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void init() {
-        nameInputEdTxt = findViewById(R.id.nameInputEdTxt);
+        nickNameInputEdTxt = findViewById(R.id.nameInputEdTxt);
         recordTxt = findViewById(R.id.recordTxt);
 
         saveBtn = findViewById(R.id.saveBtn);
@@ -50,55 +51,52 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         mRecordData = data.getStringExtra("Record");
         recordTxt.setText(mRecordData + "초");
 
-        saveBtn.setOnClickListener(this);
-    }
-
-    private void backToMainActivity() {
-        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(mainIntent);
-        finish();
+        saveBtn.setOnClickListener(btnOnClickListener);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        backToMainActivity();
+        mainBtn.setOnClickListener(btnOnClickListener);
     }
 
-    @Override
-    public void onClick(View v) {
-        int buttonId = v.getId();
-        switch (buttonId) {
-            case R.id.saveBtn:
-                Map<String, Object> saveData = new HashMap<>();
+    class BtnOnClickListener implements Button.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            int buttonId = v.getId();
+            switch (buttonId) {
+                case R.id.saveBtn:
+                    Map<String, Object> saveData = new HashMap<>();
 
-                String nickName = nameInputEdTxt.getText().toString();
+                    String nickName = nickNameInputEdTxt.getText().toString();
 
-                saveData.put("NickName", nickName);
-                saveData.put("Record", mRecordData + "초");
+                    saveData.put("NickName", nickName);
+                    saveData.put("Record", mRecordData + "초");
 
-                firestore.collection("recordData")
-                        .add(saveData)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                Toast.makeText(getApplicationContext(), "기록 저장 완료", Toast.LENGTH_SHORT).show();
-                                backToMainActivity(); 
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(getApplicationContext(), "기록 저장에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                                backToMainActivity();
-                            }
-                        });
-                break;
-            case R.id.mainBtn:
-                Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(mainIntent);
-                finish();
-                break;
+                    firestore.collection("recordData")
+                            .add(saveData)
+                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                @Override
+                                public void onSuccess(DocumentReference documentReference) {
+                                    Toast.makeText(getApplicationContext(), "기록 저장 완료", Toast.LENGTH_SHORT).show();
+                                    Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(mainIntent);
+                                    finish();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getApplicationContext(), "기록 저장에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                    break;
+                case R.id.mainBtn:
+                    Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(mainIntent);
+                    finish();
+                    break;
+            }
         }
     }
 }

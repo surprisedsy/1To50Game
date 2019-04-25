@@ -14,7 +14,7 @@ import java.util.Vector;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder> {
 
-    private Vector<Integer> _1to50 = new Vector<>();
+    private Vector<Integer> entireGroup_1to50 = new Vector<>();
     private Vector<Integer> visible = new Vector<>();
     private Context mContext;
 
@@ -36,14 +36,14 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
     @Override
     public void onBindViewHolder(@NonNull final GameAdapter.GameViewHolder viewHolder, final int position) {
 
-        int numbers = _1to50.get(position);
+        int numbers = entireGroup_1to50.get(position);
         viewHolder.btn.setText(String.valueOf(numbers));
         viewHolder.btn.setVisibility(visible.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return _1to50.size();
+        return entireGroup_1to50.size();
     }
 
     /**
@@ -51,7 +51,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
      * @param number 초기화 할 숫자
      */
     public void init1to25(int number) {
-        _1to50.add(number);
+        entireGroup_1to50.add(number);
     }
 
     /**
@@ -60,8 +60,8 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
      * @param number 지워진 button position에 넣을 랜덤숫자
      */
     public void updateNum(int position, int number) {
-        _1to50.remove(position);
-        _1to50.add(position, number);
+        entireGroup_1to50.remove(position);
+        entireGroup_1to50.add(position, number);
     }
 
     /**
@@ -79,7 +79,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
      * @return 생성된 button position의 숫자를 가져오려고 만들었음.
      */
     public int getBtnNums(int number) {
-        return _1to50.get(number);
+        return entireGroup_1to50.get(number);
     }
 
     class GameViewHolder extends RecyclerView.ViewHolder {
