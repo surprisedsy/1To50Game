@@ -1,24 +1,19 @@
-package com.example.a1to50game.Activities;
+package com.example.a1to50game;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 
-import com.example.a1to50game.R;
 import com.example.a1to50game.Ranking.RankAdapter;
 import com.example.a1to50game.Ranking.RankInfo;
+import com.example.a1to50game.databinding.ActivityRankBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -31,36 +26,31 @@ import java.util.Vector;
 public class RankActivity extends AppCompatActivity {
 
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-    private BtnOnClickListener onClickListener = new BtnOnClickListener();
+    private ActivityRankBinding binding;
 
     private Vector<RankInfo> rankInfoVector = new Vector<>();
     private Vector<RankInfo> copyVector = new Vector<>();
     private RankAdapter mRankAdapter;
-    private RecyclerView mRankRecyclerView;
     private GestureDetector mGestureDetector;
-
-    private EditText idSearchEdTxt;
-    private Button rankSearchBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rank);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_rank);
+        binding.setRankActivity(this);
 
         init();
         getData();
+//        searchName();
     }
 
     public void init() {
-        idSearchEdTxt = findViewById(R.id.idSearch);
-        rankSearchBtn = findViewById(R.id.rankSearchBtn);
-        mRankRecyclerView = findViewById(R.id.rankRecyclerView);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        mRankRecyclerView.setLayoutManager(linearLayoutManager);
+        binding.rankRecyclerView.setLayoutManager(linearLayoutManager);
 
         mRankAdapter = new RankAdapter(this, rankInfoVector);
-        mRankRecyclerView.setAdapter(mRankAdapter);
+        binding.rankRecyclerView.setAdapter(mRankAdapter);
 
         mGestureDetector = new GestureDetector(getApplicationContext(), new GestureDetector.OnGestureListener() {
             @Override
@@ -115,7 +105,7 @@ public class RankActivity extends AppCompatActivity {
                         }
                         copyVector.addAll(rankInfoVector);
 
-                        searchName();
+//                        searchName();
 
                         mRankAdapter.notifyDataSetChanged();
                     }
@@ -129,7 +119,7 @@ public class RankActivity extends AppCompatActivity {
     }
 
     public void searchName() {
-        idSearchEdTxt.addTextChangedListener(new TextWatcher() {
+        binding.idSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -140,9 +130,26 @@ public class RankActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                rankSearchBtn.setOnClickListener(onClickListener);
+                rankSearch();
             }
         });
+    }
+
+    public void rankSearch()
+    {
+        String idSearchTxt = binding.idSearch.getText().toString();
+
+        rankInfoVector.clear();
+
+        if (idSearchTxt.length() == 0)
+            rankInfoVector.addAll(copyVector);
+        else {
+            for (int i = 0; i < copyVector.size(); i++) {
+                if (copyVector.get(i).getNameTxt().contains(idSearchTxt))
+                    rankInfoVector.add(copyVector.get(i));
+            }
+        }
+        mRankAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -152,31 +159,5 @@ public class RankActivity extends AppCompatActivity {
         Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(mainIntent);
         finish();
-    }
-
-    class BtnOnClickListener implements Button.OnClickListener
-    {
-        @Override
-        public void onClick(View v) {
-            int id = v.getId();
-            switch (id)
-            {
-                case R.id.rankSearchBtn:
-                    String idSearchTxt = idSearchEdTxt.getText().toString();
-
-                    rankInfoVector.clear();
-
-                    if (idSearchTxt.length() == 0)
-                        rankInfoVector.addAll(copyVector);
-                    else {
-                        for (int i = 0; i < copyVector.size(); i++) {
-                            if (copyVector.get(i).getNameTxt().contains(idSearchTxt))
-                                rankInfoVector.add(copyVector.get(i));
-                        }
-                    }
-                    mRankAdapter.notifyDataSetChanged();
-                    break;
-            }
-        }
     }
 }

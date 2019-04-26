@@ -1,6 +1,7 @@
-package com.example.a1to50game.Activities;
+package com.example.a1to50game;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -12,28 +13,24 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a1to50game.GameMain.GameAdapter;
-import com.example.a1to50game.R;
+import com.example.a1to50game.databinding.ActivityGameBinding;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
-public class GameActivity extends AppCompatActivity implements View.OnClickListener {
+public class GameActivity extends AppCompatActivity {
 
     private long SECONDS = 0;
     private int mCurrentNum = 1;
 
-    private RecyclerView recyclerView;
+    private ActivityGameBinding binding;
+
     private GestureDetector mGestureDetector;
     private GameAdapter mGameAdapter;
-
-    private TextView timerTxt;
-    private Button gameStartBtn;
 
     private TimerTask timerTask;
     private Timer timer = new Timer();
@@ -44,10 +41,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_game);
+        binding.setGameActivity(this);
 
         init();
-        clickStartBtn();
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -58,15 +55,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void init() {
-        recyclerView = findViewById(R.id.gameRecyclerView);
-        timerTxt = findViewById(R.id.timerTxt);
-        gameStartBtn = findViewById(R.id.gameStartBtn);
-
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 5);
-        recyclerView.setLayoutManager(gridLayoutManager);
+        binding.gameRecyclerView.setLayoutManager(gridLayoutManager);
 
         mGameAdapter = new GameAdapter(this);
-        recyclerView.setAdapter(mGameAdapter);
+        binding.gameRecyclerView.setAdapter(mGameAdapter);
 
         mGestureDetector = new GestureDetector(getApplicationContext(), new GestureDetector.OnGestureListener() {
             @Override
@@ -99,8 +92,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    public void clickStartBtn() {
-        gameStartBtn.setOnClickListener(this);
+    public void gameStart() {
+        binding.timerTxt.setText("기록: ");
+        Toast.makeText(getApplicationContext(), "3초 후 시작됩니다.", Toast.LENGTH_SHORT).show();
+        createRandomizeNums();
+        timerSetting();
+
     }
 
     public void createRandomizeNums() {
@@ -118,7 +115,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void gamePlay() {
-        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+        binding.gameRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
                 View child = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
@@ -168,7 +165,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
 
-                timerTxt.setText("기록: " + String.valueOf(SECONDS) + "초");
+                binding.timerTxt.setText("기록: " + String.valueOf(SECONDS) + "초");
             }
         };
 
@@ -216,18 +213,5 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(mainIntent);
         finish();
-    }
-
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        switch (id) {
-            case R.id.gameStartBtn:
-                timerTxt.setText("기록: ");
-                Toast.makeText(getApplicationContext(), "3초 후 시작됩니다.", Toast.LENGTH_SHORT).show();
-                createRandomizeNums();
-                timerSetting();
-                break;
-        }
     }
 }

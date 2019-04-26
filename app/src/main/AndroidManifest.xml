@@ -10,10 +10,10 @@
         android:fullBackupContent="false"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.ResultActivity" />
-        <activity android:name=".Activities.RankActivity" />
-        <activity android:name=".Activities.GameActivity" />
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".ResultActivity" />
+        <activity android:name=".RankActivity" />
+        <activity android:name=".GameActivity" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
