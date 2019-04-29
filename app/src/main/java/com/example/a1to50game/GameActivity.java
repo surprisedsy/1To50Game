@@ -46,12 +46,7 @@ public class GameActivity extends AppCompatActivity {
 
         init();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                gamePlay();
-            }
-        }, 3000);
+        new Handler().postDelayed(() -> gamePlay(), 3000);
     }
 
     public void init() {

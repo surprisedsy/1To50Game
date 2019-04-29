@@ -5,6 +5,8 @@ import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a1to50game.databinding.ActivityResultBinding;
@@ -30,8 +32,7 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     public void saveData() {
-        Intent data = getIntent();
-        mRecordData = data.getStringExtra("Record");
+        mRecordData = getIntent().getStringExtra("Record");
         binding.recordTxt.setText(mRecordData + "초");
 
         Map<String, Object> saveData = new HashMap<>();
@@ -43,21 +44,13 @@ public class ResultActivity extends AppCompatActivity {
 
         firestore.collection("recordData")
                 .add(saveData)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Toast.makeText(getApplicationContext(), "기록 저장 완료", Toast.LENGTH_SHORT).show();
-                        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(mainIntent);
-                        finish();
-                    }
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(getApplicationContext(), "기록 저장 완료", Toast.LENGTH_SHORT).show();
+                    Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(mainIntent);
+                    finish();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(), "기록 저장에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                .addOnFailureListener(e -> Toast.makeText(getApplicationContext(), "기록 저장에 실패하였습니다.", Toast.LENGTH_SHORT).show());
     }
 
     public void goToMain()

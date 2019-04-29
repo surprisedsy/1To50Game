@@ -41,7 +41,6 @@ public class RankActivity extends AppCompatActivity {
 
         init();
         getData();
-//        searchName();
     }
 
     public void init() {
@@ -87,56 +86,50 @@ public class RankActivity extends AppCompatActivity {
         firestore.collection("recordData")
                 .orderBy("Record")
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            String userName = document.get("NickName").toString();
-                            String userRecord = document.get("Record").toString();
+                .addOnCompleteListener(task -> {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String userName = document.get("NickName").toString();
+                        String userRecord = document.get("Record").toString();
 
-                            RankInfo info = new RankInfo();
+                        RankInfo info = new RankInfo();
 
-                            for (int i = -1; i < rankInfoVector.size(); i++) {
-                                info.setNameTxt(userName + " /");
-                                info.setRecordTxt(userRecord);
-                                info.setNumberTxt(String.valueOf(i + 2) + "등");
-                            }
-                            rankInfoVector.add(info);
+                        for (int i = -1; i < rankInfoVector.size(); i++) {
+                            info.setNameTxt(userName + " /");
+                            info.setRecordTxt(userRecord);
+                            info.setNumberTxt(String.valueOf(i + 2) + "등");
                         }
-                        copyVector.addAll(rankInfoVector);
-
-//                        searchName();
-
-                        mRankAdapter.notifyDataSetChanged();
+                        rankInfoVector.add(info);
                     }
+                    copyVector.addAll(rankInfoVector);
+
+                    searchName();
+
+                    mRankAdapter.notifyDataSetChanged();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        e.printStackTrace();
-                    }
-                });
+                .addOnFailureListener(e -> e.printStackTrace());
     }
 
     public void searchName() {
-        binding.idSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            binding.idSearch.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                rankSearch();
-            }
-        });
+                @Override
+                public void afterTextChanged(Editable s) {
+                    binding.rankSearchBtn.setOnClickListener(v -> {
+                        rankSearch();
+                    });
+                }
+            });
+
     }
 
-    public void rankSearch()
-    {
+    public void rankSearch() {
         String idSearchTxt = binding.idSearch.getText().toString();
 
         rankInfoVector.clear();
