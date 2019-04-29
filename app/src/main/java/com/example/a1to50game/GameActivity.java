@@ -29,7 +29,7 @@ public class GameActivity extends AppCompatActivity {
 
     private ActivityGameBinding binding;
 
-    private GestureDetector mGestureDetector;
+    GestureDetector mGestureDetector;
     private GameAdapter mGameAdapter;
 
     private TimerTask timerTask;

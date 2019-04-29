@@ -15,12 +15,12 @@ import java.util.Vector;
 
 public class RankAdapter extends RecyclerView.Adapter<RankAdapter.RankViewHolder> {
 
-    private Vector<RankInfo> rankInfos;
-    private Context context;
+    private Vector<RankInfo> rankInfoVector;
+    private Context mContext;
 
-    public RankAdapter(Context context, Vector<RankInfo> rankInfos) {
-        this.context = context;
-        this.rankInfos = rankInfos;
+    public RankAdapter(Context context, Vector<RankInfo> rankInfoVector) {
+        this.mContext = context;
+        this.rankInfoVector = rankInfoVector;
     }
 
     @NonNull
@@ -33,7 +33,7 @@ public class RankAdapter extends RecyclerView.Adapter<RankAdapter.RankViewHolder
     @Override
     public void onBindViewHolder(@NonNull RankViewHolder rankViewHolder, int position) {
 
-        RankInfo info = rankInfos.get(position);
+        RankInfo info = rankInfoVector.get(position);
 
         if (position < 10) {
             rankViewHolder.numberTxt.setText(info.getNumberTxt());
@@ -48,13 +48,13 @@ public class RankAdapter extends RecyclerView.Adapter<RankAdapter.RankViewHolder
 
     @Override
     public int getItemCount() {
-        return rankInfos.size();
+        return rankInfoVector.size();
     }
 
     class RankViewHolder extends RecyclerView.ViewHolder {
         private TextView nameTxt, recordTxt, numberTxt;
 
-        public RankViewHolder(@NonNull View itemView) {
+        private RankViewHolder(@NonNull View itemView) {
             super(itemView);
 
             numberTxt = itemView.findViewById(R.id.rank_rankTxt);

@@ -15,14 +15,14 @@ import java.util.Vector;
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder> {
 
     private Vector<Integer> entireGroup_1to50 = new Vector<>();
-    private Vector<Integer> visible = new Vector<>();
+    private Vector<Integer> visibleGroup = new Vector<>();
     private Context mContext;
 
     public GameAdapter(Context context) {
         this.mContext = context;
 
         for (int i = 0; i < 25; i++)
-            visible.add(i, View.VISIBLE);
+            visibleGroup.add(i, View.VISIBLE);
     }
 
     @NonNull
@@ -38,7 +38,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
         int numbers = entireGroup_1to50.get(position);
         viewHolder.btn.setText(String.valueOf(numbers));
-        viewHolder.btn.setVisibility(visible.get(position));
+        viewHolder.btn.setVisibility(visibleGroup.get(position));
     }
 
     @Override
@@ -69,8 +69,8 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
      * @param position number < 26 일때 position remove & button INVISIBLE
      */
     public void setUpVisible(int position) {
-        visible.remove(position);
-        visible.add(position, View.INVISIBLE);
+        visibleGroup.remove(position);
+        visibleGroup.add(position, View.INVISIBLE);
     }
 
     /**

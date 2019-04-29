@@ -15,10 +15,10 @@ import java.util.Map;
 
 public class ResultActivity extends AppCompatActivity {
 
-    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ActivityResultBinding binding;
 
-    private Intent getData;
+    Intent getData;
     private String recordData;
 
     @Override
@@ -40,7 +40,7 @@ public class ResultActivity extends AppCompatActivity {
         saveData.put("NickName", nickName);
         saveData.put("Record", recordData + "초");
 
-        firestore.collection("recordData")
+        db.collection("recordData")
                 .add(saveData)
                 .addOnSuccessListener(documentReference -> {
                     Toast.makeText(getApplicationContext(), "기록 저장 완료", Toast.LENGTH_SHORT).show();

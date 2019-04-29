@@ -21,13 +21,13 @@ import java.util.Vector;
 
 public class RankActivity extends AppCompatActivity {
 
-    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ActivityRankBinding binding;
 
     private Vector<RankInfo> rankInfoVector = new Vector<>();
     private Vector<RankInfo> copyVector = new Vector<>();
     private RankAdapter mRankAdapter;
-    private GestureDetector mGestureDetector;
+    GestureDetector mGestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,50 +82,62 @@ public class RankActivity extends AppCompatActivity {
     }
 
     public void getData() {
-        firestore.collection("recordData")
+        db.collection("recordData")
                 .orderBy("Record")
                 .get()
                 .addOnCompleteListener(task -> {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String userName = document.get("NickName").toString();
-                        String userRecord = document.get("Record").toString();
+                    try {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String userName = document.get("NickName").toString();
+                            String userRecord = document.get("Record").toString();
 
-                        RankInfo info = new RankInfo();
+                            RankInfo info = new RankInfo();
 
-                        int i;
-                        for (i = -1; i < rankInfoVector.size(); i++) {
-                            info.setNameTxt(userName + " /");
-                            info.setRecordTxt(userRecord);
-                            info.setNumberTxt(String.valueOf(i + 2) + "등");
+                            /**
+                             * 왜 -1부터 시작하냐면...
+                             * userName/Record 받아올때 i=0 으로 해도 첫번째 데이터를 가져오긴 하지만 for문 루프로 들어가지는 않음. 왜그런지는 모르겠음..
+                             * 따라서 setText method들에 셋팅이 안되서 값이 아무것도 안나옴.
+                             * 근데 -1부터 시작하면 i++ 이후 i=0 이 만족되서 0번 인덱스에 값이 들어감.
+                             * 어쨌든 document.get("keys").toString(); 때문에 그런듯.
+                             */
+                            int i;
+                            for (i = -1; i < rankInfoVector.size(); i++) {
+                                info.setNameTxt(userName + " /");
+                                info.setRecordTxt(userRecord);
+                                info.setNumberTxt(String.valueOf(i + 2) + "등");
+                            }
+                            rankInfoVector.add(info);
                         }
-                        rankInfoVector.add(info);
+                        copyVector.addAll(rankInfoVector);
+
+                        searchName();
+
+                        mRankAdapter.notifyDataSetChanged();
+
+                    } catch (NullPointerException e) {
+                        Log.e("get record error", e.getMessage());
                     }
-                    copyVector.addAll(rankInfoVector);
-
-                    searchName();
-
-                    mRankAdapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> e.printStackTrace());
     }
 
     public void searchName() {
-            binding.idSearch.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
+        binding.idSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
-                @Override
-                public void afterTextChanged(Editable s) {
-                    binding.rankSearchBtn.setOnClickListener(v -> {
-                        rankSearch();
-                    });
-                }
-            });
+            @Override
+            public void afterTextChanged(Editable s) {
+                binding.rankSearchBtn.setOnClickListener(v -> {
+                    rankSearch();
+                });
+            }
+        });
 
     }
 
