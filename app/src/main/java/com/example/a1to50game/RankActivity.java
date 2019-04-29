@@ -2,7 +2,6 @@ package com.example.a1to50game;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,12 +14,8 @@ import android.view.MotionEvent;
 import com.example.a1to50game.Ranking.RankAdapter;
 import com.example.a1to50game.Ranking.RankInfo;
 import com.example.a1to50game.databinding.ActivityRankBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Vector;
 
@@ -48,6 +43,9 @@ public class RankActivity extends AppCompatActivity {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         binding.rankRecyclerView.setLayoutManager(linearLayoutManager);
+        // max 에는 리사이클 뷰 생성 숫자가 옴. ex) 10이라면 10개까지 리사이클 되는 뷰를 생성 하라는 뜻.
+        // default는 5로 잡혀있다.
+        binding.rankRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
 
         mRankAdapter = new RankAdapter(this, rankInfoVector);
         binding.rankRecyclerView.setAdapter(mRankAdapter);
@@ -101,7 +99,6 @@ public class RankActivity extends AppCompatActivity {
                             info.setNumberTxt(String.valueOf(i + 2) + "등");
                         }
                         rankInfoVector.add(info);
-                        Log.d("get name", rankInfoVector.get(i).getNameTxt());
                     }
                     copyVector.addAll(rankInfoVector);
 
