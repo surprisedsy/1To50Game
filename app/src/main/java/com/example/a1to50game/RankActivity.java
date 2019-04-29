@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
@@ -93,12 +94,14 @@ public class RankActivity extends AppCompatActivity {
 
                         RankInfo info = new RankInfo();
 
-                        for (int i = -1; i < rankInfoVector.size(); i++) {
+                        int i;
+                        for (i = -1; i < rankInfoVector.size(); i++) {
                             info.setNameTxt(userName + " /");
                             info.setRecordTxt(userRecord);
                             info.setNumberTxt(String.valueOf(i + 2) + "등");
                         }
                         rankInfoVector.add(info);
+                        Log.d("get name", rankInfoVector.get(i).getNameTxt());
                     }
                     copyVector.addAll(rankInfoVector);
 

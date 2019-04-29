@@ -2,17 +2,12 @@ package com.example.a1to50game;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.TextView;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.a1to50game.databinding.ActivityResultBinding;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -20,27 +15,30 @@ import java.util.Map;
 
 public class ResultActivity extends AppCompatActivity {
 
-    private String mRecordData;
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private ActivityResultBinding binding;
+
+    private Intent getData;
+    private String recordData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_result);
         binding.setResultActivity(this);
+
+        getData = getIntent();
+        recordData = getData.getStringExtra("Record");
+        binding.recordTxt.setText(recordData + "초");
     }
 
     public void saveData() {
-        mRecordData = getIntent().getStringExtra("Record");
-        binding.recordTxt.setText(mRecordData + "초");
-
         Map<String, Object> saveData = new HashMap<>();
 
         String nickName = binding.nameInputEdTxt.getText().toString();
 
         saveData.put("NickName", nickName);
-        saveData.put("Record", mRecordData + "초");
+        saveData.put("Record", recordData + "초");
 
         firestore.collection("recordData")
                 .add(saveData)
