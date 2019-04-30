@@ -6,9 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import com.example.a1to50game.R;
+import com.example.a1to50game.databinding.ButtonsBinding;
 
 import java.util.Vector;
 
@@ -29,16 +28,15 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
     @Override
     public GameAdapter.GameViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.buttons, parent, false);
-        return new GameViewHolder(view);
+        return new GameViewHolder(ButtonsBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull final GameAdapter.GameViewHolder viewHolder, final int position) {
 
         int numbers = entireGroup_1to50.get(position);
-        viewHolder.btn.setText(String.valueOf(numbers));
-        viewHolder.btn.setVisibility(visibleGroup.get(position));
+        viewHolder.binding.btn01.setText(String.valueOf(numbers));
+        viewHolder.binding.btn01.setVisibility(visibleGroup.get(position));
     }
 
     @Override
@@ -84,12 +82,12 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
     class GameViewHolder extends RecyclerView.ViewHolder {
 
-        private Button btn;
+        ButtonsBinding binding;
 
-        private GameViewHolder(@NonNull View itemView) {
-            super(itemView);
+        private GameViewHolder(ButtonsBinding binding) {
+            super(binding.getRoot());
 
-            btn = itemView.findViewById(R.id.btn01);
+            this.binding = binding;
         }
     }
 }

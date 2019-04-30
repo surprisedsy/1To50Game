@@ -7,9 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.example.a1to50game.R;
+import com.example.a1to50game.databinding.RanktextBinding;
 
 import java.util.Vector;
 
@@ -26,8 +25,7 @@ public class RankAdapter extends RecyclerView.Adapter<RankAdapter.RankViewHolder
     @NonNull
     @Override
     public RankViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ranktext, parent, false);
-        return new RankViewHolder(view);
+        return new RankViewHolder(RanktextBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
@@ -36,13 +34,13 @@ public class RankAdapter extends RecyclerView.Adapter<RankAdapter.RankViewHolder
         RankInfo info = rankInfoVector.get(position);
 
         if (position < 10) {
-            rankViewHolder.numberTxt.setText(info.getNumberTxt());
-            rankViewHolder.nameTxt.setText(info.getNameTxt());
-            rankViewHolder.recordTxt.setText(info.getRecordTxt());
+            rankViewHolder.binding.rankNumTxt.setText(info.getNumberTxt());
+            rankViewHolder.binding.rankNameTxt.setText(info.getNameTxt());
+            rankViewHolder.binding.rankRecordTxt.setText(info.getRecordTxt());
         } else {
-            rankViewHolder.numberTxt.setVisibility(View.GONE);
-            rankViewHolder.nameTxt.setVisibility(View.GONE);
-            rankViewHolder.recordTxt.setVisibility(View.GONE);
+            rankViewHolder.binding.rankNumTxt.setVisibility(View.GONE);
+            rankViewHolder.binding.rankNameTxt.setVisibility(View.GONE);
+            rankViewHolder.binding.rankRecordTxt.setVisibility(View.GONE);
         }
     }
 
@@ -52,14 +50,13 @@ public class RankAdapter extends RecyclerView.Adapter<RankAdapter.RankViewHolder
     }
 
     class RankViewHolder extends RecyclerView.ViewHolder {
-        private TextView nameTxt, recordTxt, numberTxt;
 
-        private RankViewHolder(@NonNull View itemView) {
-            super(itemView);
+        RanktextBinding binding;
 
-            numberTxt = itemView.findViewById(R.id.rank_rankTxt);
-            nameTxt = itemView.findViewById(R.id.rank_nameTxt);
-            recordTxt = itemView.findViewById(R.id.rank_recordTxt);
+        private RankViewHolder(RanktextBinding binding) {
+            super(binding.getRoot());
+
+            this.binding = binding;
         }
     }
 }

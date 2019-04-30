@@ -2,6 +2,7 @@ package com.example.a1to50game;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,7 +10,11 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageButton;
 
 import com.example.a1to50game.Ranking.RankAdapter;
 import com.example.a1to50game.Ranking.RankInfo;
@@ -43,8 +48,10 @@ public class RankActivity extends AppCompatActivity {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         binding.rankRecyclerView.setLayoutManager(linearLayoutManager);
-        // max 에는 리사이클 뷰 생성 숫자가 옴. ex) 10이라면 10개까지 리사이클 되는 뷰를 생성 하라는 뜻.
-        // default는 5로 잡혀있다.
+        /**
+         * pool이 사라지기 전에 고정시키기 위해 max viewholder 값을 셋팅하는 함수.
+         * 아마 object pool 아니면 recyclerview 말하는듯?
+         */
         binding.rankRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
 
         mRankAdapter = new RankAdapter(this, rankInfoVector);
@@ -136,9 +143,15 @@ public class RankActivity extends AppCompatActivity {
                 binding.rankSearchBtn.setOnClickListener(v -> {
                     rankSearch();
                 });
+
+                if (binding.idSearch.getText().toString().length() == 0)
+                {
+                    rankInfoVector.clear();
+                    rankInfoVector.addAll(copyVector);
+                }
+                mRankAdapter.notifyDataSetChanged();
             }
         });
-
     }
 
     public void rankSearch() {
@@ -157,12 +170,37 @@ public class RankActivity extends AppCompatActivity {
         mRankAdapter.notifyDataSetChanged();
     }
 
+    public void goToMain()
+    {
+        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(mainIntent);
+        finish();
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
 
-        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(mainIntent);
-        finish();
+        goToMain();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        ActionBar actionBar = getSupportActionBar();
+
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowHomeEnabled(false);
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View actionbar = inflater.inflate(R.layout.custom_actionbar, null);
+
+        actionBar.setCustomView(actionbar);
+
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> goToMain());
+
+        return true;
     }
 }
